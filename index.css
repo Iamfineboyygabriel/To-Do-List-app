@@ -159,9 +159,16 @@
         color: var(--pink); /* Set the color of the text */
        }
     
-       .task .actions .delete{
+       .task .actions .delete {
+        cursor: pointer;
+        font-size: 1.125rem;
+        font-weight: 700;
+        text-transform: uppercase;
         color: crimson;
-       }
+        margin-left: 0.5rem;
+        border: none;
+        outline: none;
+    }
 
     .completed {
         text-decoration: line-through;

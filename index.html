@@ -10,7 +10,8 @@
     <header>
         <h1>Task List</h1>
         <form id="new-task-form">
-            <input type="text" id="new-task-input" placeholder="What do you have planned?"/>
+            <input type="text" id="new-task-input" placeholder="What do you have planned?" required/>
+            <input type="datetime-local" id="new-task-datetime" required/>
             <input type="submit" value="Add Task" id="new-task-submit"/>
         </form>
     </header>
@@ -25,5 +26,3 @@
     <script src="./main.js"></script>
 </body>
 </html>
-
-

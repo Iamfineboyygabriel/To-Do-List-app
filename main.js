@@ -1,13 +1,12 @@
 window.addEventListener('load', () => {
-    alert('new update coming soon !')
+    alert('New update coming soon!');
     const form = document.querySelector('#new-task-form');
     const input = document.querySelector('#new-task-input');
+    const datetimeInput = document.querySelector('#new-task-datetime');
     const list_el = document.querySelector('#tasks');
 
-    // Load tasks from local storage on page load
     const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
 
-    // Function to render tasks
     const renderTasks = () => {
         list_el.innerHTML = '';
 
@@ -26,14 +25,13 @@ window.addEventListener('load', () => {
             }
             task_input_el.setAttribute('readonly', 'readonly');
 
-            // Add click event listener to toggle completion status
-            task_input_el.addEventListener('click', () => {
-                task.completed = !task.completed;
-                updateLocalStorage();
-                renderTasks(); // Re-render tasks after completion status change
-            });
-
+            const task_datetime_el = document.createElement('span');
+            task_datetime_el.classList.add('task-datetime');
+            task_datetime_el.textContent = task.datetime;
             task_content_el.appendChild(task_input_el);
+            task_content_el.appendChild(task_datetime_el);
+
+            task_el.appendChild(task_content_el);
 
             const task_actions_el = document.createElement('div');
             task_actions_el.classList.add('actions');
@@ -42,34 +40,53 @@ window.addEventListener('load', () => {
             task_edit_el.classList.add('edit');
             task_edit_el.textContent = 'Edit';
 
+            const task_save_el = document.createElement('button');
+            task_save_el.classList.add('save');
+            task_save_el.textContent = 'Save';
+
             const task_delete_el = document.createElement('button');
             task_delete_el.classList.add('delete');
             task_delete_el.textContent = 'Delete';
 
-            // Add click event listener to delete task
-            task_delete_el.addEventListener('click', () => {
-                tasks.splice(index, 1);
-                updateLocalStorage();
-                renderTasks(); // Re-render tasks after deletion
-            });
-
-            task_actions_el.appendChild(task_edit_el);
-            task_actions_el.appendChild(task_delete_el);
-
-            task_el.appendChild(task_content_el);
-            task_el.appendChild(task_actions_el);
-
-            list_el.appendChild(task_el);
+            task_save_el.style.display = 'none';
 
             task_edit_el.addEventListener('click', () => {
                 task_input_el.removeAttribute('readonly');
                 task_input_el.focus();
-                task_edit_el.innerText = 'Save';
+                task_edit_el.style.display = 'none';
+                task_save_el.style.display = 'inline';
             });
+
+            task_save_el.addEventListener('click', () => {
+                task_input_el.setAttribute('readonly', 'readonly');
+                task_edit_el.style.display = 'inline';
+                task_save_el.style.display = 'none';
+                tasks[index].text = task_input_el.value;
+                updateLocalStorage();
+            });
+
+            task_delete_el.addEventListener('click', () => {
+                tasks.splice(index, 1);
+                updateLocalStorage();
+                renderTasks();
+            });
+
+            task_actions_el.appendChild(task_edit_el);
+            task_actions_el.appendChild(task_save_el);
+            task_actions_el.appendChild(task_delete_el);
+
+            task_el.appendChild(task_actions_el);
+
+            task_input_el.addEventListener('click', () => {
+                task.completed = !task.completed;
+                updateLocalStorage();
+                renderTasks();
+            });
+
+            list_el.appendChild(task_el);
         });
     };
 
-    // Function to update local storage
     const updateLocalStorage = () => {
         localStorage.setItem('tasks', JSON.stringify(tasks));
     };
@@ -78,19 +95,20 @@ window.addEventListener('load', () => {
         e.preventDefault();
 
         const task = input.value;
+        const datetime = datetimeInput.value;
 
-        if (!task) {
-            alert('Please fill out the task');
+        if (!task || !datetime) {
+            alert('Please fill out the task and select a date and time');
             return;
         }
 
-        tasks.push({ text: task, completed: false });
+        tasks.push({ text: task, completed: false, datetime: datetime });
         updateLocalStorage();
         renderTasks();
 
-        input.value = ''; // Clear the input field after adding the task
+        input.value = '';
+        datetimeInput.value = '';
     });
 
-    // Call the renderTasks function on page load
     renderTasks();
 });
